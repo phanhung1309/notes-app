@@ -1,20 +1,14 @@
 const chalk = require('chalk')
 const fs = require('fs')
 
-const getNotes = () => {
-    return 'ERROR!'
-}
-
 const addNote = (title, body) => {
     // Try to read file notes.json, if empty notes will assign to empty array
     const notes = loadNote()
 
     //Check exist of title note? 
-    const duplicateNotes = notes.filter((note) => {
-        return note.title === title
-    })
+    const duplicateNote = notes.find((note) => note.title === title)
 
-    if(duplicateNotes.length == 0) {
+    if(!duplicateNote) {
         // Push object to notes array
         notes.push({
             title: title,
@@ -33,9 +27,7 @@ const removeNote = (title) => {
     const notes = loadNote()
 
     // Keep all note that have title different with removeNote title
-    const noteToKeep = notes.filter((note) => {
-        return note.title !== title
-    })
+    const noteToKeep = notes.filter((note) => note.title !== title)
 
     if (notes.length == noteToKeep.length) {
         console.log(chalk.red.inverse('No note found'))
@@ -55,6 +47,17 @@ const listNotes = () => {
     })
 }
 
+const readNote = (title) => {
+    const notes = loadNote()
+    const noteToRead = notes.find((note) => note.title == title)
+    if(noteToRead) {
+        console.log(chalk.inverse(noteToRead.title))
+        console.log(noteToRead.body)
+    } else {
+        console.log(chalk.red.inverse('Note not found'))
+    }
+}
+
 const loadNote = () => {
     try {
         const dataBuffer = fs.readFileSync('notes.json')
@@ -71,8 +74,8 @@ const saveNote = (notes) => {
 }
 
 module.exports = {
-    getNotes: getNotes,
     addNote: addNote,
     removeNote: removeNote,
     listNotes: listNotes,
+    readNote: readNote
 }
